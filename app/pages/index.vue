@@ -4,15 +4,11 @@ import { ref } from 'vue';
 import { usePrimeVue } from 'primevue/config';
 import '../utils/llm';
 import { Divider } from 'primevue';
+import ProviderConfig from '~/components/ProviderConfig.vue';
 
 const primevue = usePrimeVue();
 
-const provider = ref<Provider>({
-  name: 'test',
-  base_url: 'https://api.siliconflow.cn/v1/chat/completions',
-  api_key: localStorage.getItem('test_api_key') || '',
-  model: 'deepseek-ai/DeepSeek-V3.2'
-});
+const provider = ref<IProvider>();
 
 const copyMessage = (messageIndex: number) => {
   const message = messages.value[messageIndex]!.content;
@@ -33,6 +29,9 @@ const isLoading = ref(false);
 
 // 发送消息功能
 const sendMessage = async () => {
+  if (!provider.value) {
+    return;
+  }
   scrollToBottom();
   messages.value.push({
     content: inputMessage.value,
@@ -124,6 +123,7 @@ const scrollToBottom = () => {
             <Button
               label="发送"
               @click="sendMessage"
+              :disabled="!provider"
               class="whitespace-nowrap" />
           </div>
         </div>
@@ -132,13 +132,7 @@ const scrollToBottom = () => {
         </p>
       </div>
     </main>
-    <Dialog v-model:visible="dialogVisible" class="w-[60vw]">
-      <div class="flex flex-col gap-1">
-        <InputText v-model="provider.base_url" placeholder="请输入 Base URL" />
-        <InputText v-model="provider.api_key" placeholder="请输入 API Key" />
-        <InputText v-model="provider.model" placeholder="请输入模型名称" />
-      </div>
-    </Dialog>
+    <ProviderConfig v-model="dialogVisible" v-model:provider="provider" />
   </div>
 </template>
 

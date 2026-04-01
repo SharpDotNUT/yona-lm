@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
 import ky from 'ky';
 
-export const message = async (messages: Ref<Message[]>, provider: Provider) => {
+export const message = async (
+  messages: Ref<Message[]>,
+  provider: IProvider
+) => {
   // 使用 fetch API 来处理 SSE 流
   const response = await fetch(`${provider.base_url}`, {
     method: 'POST',

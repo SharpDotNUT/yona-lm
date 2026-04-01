@@ -13,7 +13,8 @@ export type Message = {
   time: number;
 };
 
-export type Provider = {
+export type IProvider = {
+  id: string;
   name: string;
   base_url: string;
   api_key: string;
