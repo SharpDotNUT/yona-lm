@@ -4,7 +4,11 @@ const show = defineModel<boolean>();
 const provider = defineModel<IProvider>('provider');
 
 const providers = ref(await getAllProviders());
-const currentProvider = ref(providers.value[0]!);
+const currentProviderID = ref(providers.value[0]!.id);
+const currentProvider = computed(
+  () =>
+    providers.value.find((provider) => provider.id === currentProviderID.value)!
+);
 
 const refresh = async () => {
   providers.value = await getAllProviders();
@@ -14,13 +18,13 @@ const create = async () => {
   const newProvider = getEmptyProvider();
   setProvider(newProvider.id, newProvider);
   await refresh();
-  currentProvider.value = newProvider;
+  currentProviderID.value = newProvider.id;
 };
 
 const del = async () => {
   deleteProvider(currentProvider.value.id);
   if (!providers.value.length) create();
-  currentProvider.value = providers.value[0]!;
+  currentProviderID.value = providers.value[0]!.id;
   refresh();
 };
 
@@ -38,43 +42,34 @@ watch(
 <template>
   <Dialog v-model:visible="show" class="w-[60vw]">
     <div class="flex flex-col gap-2">
-      <div class="flex gap-2">
-        <IftaLabel class="flex-1">
-          <Select
-            fluid
-            :options="providers"
-            v-model="currentProvider"
-            optionLabel="name" />
-          <label>选择提供方</label>
-        </IftaLabel>
-        <Button @click="create">创建</Button>
+      <div class="flex gap-2 mt-2">
+        <VarSelect
+          class="flex-1"
+          v-model="currentProviderID"
+          placeholder="提供方">
+          <VarOption
+            v-for="provider in providers"
+            :key="provider.id"
+            :value="provider.id"
+            :label="provider.name"></VarOption>
+        </VarSelect>
+        <VarButton @click="create">创建</VarButton>
       </div>
-      <Divider />
-      <IftaLabel>
-        <InputText fluid v-model="currentProvider.name" />
-        <label>名称</label>
-      </IftaLabel>
-      <IftaLabel>
-        <InputText fluid v-model="currentProvider.base_url" />
-        <label>Base URL</label>
-      </IftaLabel>
-      <IftaLabel>
-        <InputText fluid v-model="currentProvider.api_key" />
-        <label>API Key</label>
-      </IftaLabel>
-      <IftaLabel>
-        <InputText fluid v-model="currentProvider.model" />
-        <label>模型名称</label>
-      </IftaLabel>
-      <Button
+      <VarDivider />
+      <VarInput v-model="currentProvider.name" placeholder="名称" />
+      <VarInput v-model="currentProvider.base_url" placeholder="Base URL" />
+      <VarInput v-model="currentProvider.api_key" placeholder="API Key" />
+      <VarInput v-model="currentProvider.model" placeholder="模型名称" />
+      <VarDivider />
+      <VarButton @click="del">删除</VarButton>
+      <VarButton
         @click="
           setProvider(currentProvider.id, currentProvider);
           provider = currentProvider;
           refresh();
         ">
         保存
-      </Button>
-      <Button @click="del">删除</Button>
+      </VarButton>
     </div>
     <template #footer></template>
   </Dialog>
