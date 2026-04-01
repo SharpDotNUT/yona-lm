@@ -1,11 +1,6 @@
 <template>
   <div class="p-2">
-    <Toolbar class="rounded-xl!">
-      <template #start>
-        <span>Yona LM</span>
-      </template>
-      <template #end></template>
-    </Toolbar>
+    <VarAppBar class="rounded-xl!" title="Yona LM"></VarAppBar>
   </div>
 </template>
 

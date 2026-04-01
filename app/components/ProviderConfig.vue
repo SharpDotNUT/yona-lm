@@ -40,7 +40,11 @@ watch(
 </script>
 
 <template>
-  <Dialog v-model:visible="show" class="w-[60vw]">
+  <VarDialog
+    v-model:show="show"
+    title="配置"
+    :cancel-button="false"
+    class="w-[60vw]">
     <div class="flex flex-col gap-2">
       <div class="flex gap-2 mt-2">
         <VarSelect
@@ -71,6 +75,5 @@ watch(
         保存
       </VarButton>
     </div>
-    <template #footer></template>
-  </Dialog>
+  </VarDialog>
 </template>
