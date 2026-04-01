@@ -51,11 +51,11 @@ const scrollToBottom = () => {
 </script>
 
 <template>
-  <div class="min-h-screen from-gray-50 to-gray-100 flex flex-col">
+  <div class="from-gray-50 to-gray-100 flex flex-col h-full">
     <main
-      class="flex-1 flex flex-col max-w-4xl w-full mx-auto px-4 py-6 md:px-6 flex-grow">
+      class="flex-1 flex flex-col max-w-4xl w-full h-full mx-auto px-4 py-6">
       <div
-        class="chat-container rounded-lg shadow-md flex-1 overflow-y-auto mb-4 p-4 max-h-[calc(100vh-220px)]"
+        class="chat-container flex-1 overflow-y-auto mb-4 p-4 max-h-[calc(100vh-220px)]"
         style="height: 100%">
         <div
           v-for="(msg, index) in messages"
@@ -70,66 +70,45 @@ const scrollToBottom = () => {
                   ? ' justify-items-end'
                   : 'justify-items-start'
               "></div>
-            <Card>
-              <template #content>
-                <pre class="text-wrap">{{ msg.content }}</pre>
-                <Divider />
-                <div class="flex justify-between items-center">
-                  <p class="text-xs">
-                    {{ timeFormat(msg.time) }}
-                  </p>
-                  <Button
-                    @click="copyMessage(index)"
-                    label="复制"
-                    severity="secondary"
-                    size="small" />
-                </div>
-              </template>
-            </Card>
-          </div>
-        </div>
-
-        <!-- 加载指示器 -->
-        <div v-if="isLoading" class="flex items-start mb-4">
-          <Avatar
-            label="AI"
-            shape="circle"
-            class="bg-purple-500 text-white mr-3 mt-1"
-            size="small" />
-          <div class="bg-gray-100 rounded-lg px-4 py-3">
-            <ProgressSpinner
-              style="width: 24px; height: 24px"
-              strokeWidth="4"
-              fill="var(--surface-ground)"
-              class="mr-2" />
+            <div>
+              <pre class="text-wrap">{{ msg.content }}</pre>
+              <Divider />
+              <div class="flex justify-between items-center gap-2">
+                <p class="text-xs">
+                  {{ timeFormat(msg.time) }}
+                </p>
+                <VarButton
+                  @click="copyMessage(index)"
+                  severity="secondary"
+                  size="small">
+                  复制
+                </VarButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <div>
-        <Divider />
-        <div class="flex items-end gap-2">
-          <Textarea
-            v-model="inputMessage"
-            placeholder="输入您的消息..."
-            rows="3"
-            filled
-            :maxlength="1000"
-            class="flex-1 scroll-auto" />
-          <div class="flex flex-col gap-1">
-            <Button
-              label="配置"
-              @click="dialogVisible = true"
-              class="whitespace-nowrap" />
-            <Button
-              label="发送"
-              @click="sendMessage"
-              :disabled="!provider"
-              class="whitespace-nowrap" />
-          </div>
+      <VarDivider />
+      <div class="flex items-center gap-2 pt-4 pb-4">
+        <VarInput
+          textarea
+          v-model="inputMessage"
+          placeholder="输入您的消息..."
+          rows="3"
+          filled
+          :maxlength="1000"
+          class="flex-1 scroll-auto" />
+        <div class="flex flex-col gap-1">
+          <VarButton @click="dialogVisible = true" class="whitespace-nowrap">
+            配置
+          </VarButton>
+          <VarButton
+            @click="sendMessage"
+            :disabled="!provider"
+            class="whitespace-nowrap">
+            发送
+          </VarButton>
         </div>
-        <p class="text-xs text-gray-500 mt-2 text-right">
-          {{ inputMessage.length }}/1000
-        </p>
       </div>
     </main>
     <ProviderConfig v-model="dialogVisible" v-model:provider="provider" />
